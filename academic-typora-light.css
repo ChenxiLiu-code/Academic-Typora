@@ -1,0 +1,237 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+@import url("github.css");
+:root { --ad-ink: #222222; --ad-muted: #555555; --ad-rule: #999999; --ad-link: #333333; --ad-code: #f2f2f2; }
+
+/* academic-typora. Typography is scoped to #write.
+   Keep Typora's installed github.css / night.css and their asset folders.
+   No global p/h1/table/input/button reset; numbering is scoped to the document. */
+:root {
+  --ad-width: 1040px; /* Includes 48px left/right padding: 944px text */
+  --ad-font-size: 19px;
+  --ad-line-height: 1.65;
+  --ad-serif: "Times New Roman", "Times", "TeX Gyre Termes", "Liberation Serif", "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
+}
+#write {
+  box-sizing: border-box;
+  max-width: var(--ad-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 48px 48px 100px;
+  font-family: var(--ad-serif);
+  font-size: var(--ad-font-size);
+  line-height: var(--ad-line-height);
+  color: var(--ad-ink);
+  text-align: left;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+#write > p { margin: 0 0 .85em; text-indent: 0; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6 {
+  font-family: var(--ad-serif);
+  color: var(--ad-ink);
+  line-height: 1.3;
+  padding: 0;
+  border: 0;
+  background: none;
+  letter-spacing: normal;
+  text-transform: none;
+  text-decoration: none; /* Override base-theme heading underlines. */
+  break-after: avoid;
+}
+#write h1 { font-size: 1.8em; font-weight: 600; margin: .2em 0 1.1em; text-align: center; }
+#write h2 { font-size: 1.32em; font-weight: 700; margin: 1.65em 0 .65em; }
+#write h3 { font-size: 1.12em; font-weight: 600; font-style: italic; margin: 1.4em 0 .55em; }
+#write h4 { font-size: 1em; font-weight: 700; margin: 1.2em 0 .45em; }
+#write h5, #write h6 { font-size: 1em; font-weight: 400; font-style: italic; margin: 1.1em 0 .45em; }
+#write strong { font-weight: 700; color: inherit; }
+#write a { color: var(--ad-link); text-decoration: underline; text-underline-offset: .15em; }
+#write a:hover { color: var(--ad-ink); }
+#write blockquote {
+  margin: 1em 0; padding: .15em 1em; border: 0;
+  border-left: 2px solid var(--ad-rule); color: var(--ad-muted); background: transparent;
+  font-size: 1em;
+}
+#write blockquote p { margin: .3em 0; }
+#write ul, #write ol { margin: .6em 0 1em; padding-left: 1.65em; }
+#write li { margin: .25em 0; }
+#write li > p { margin: .3em 0; }
+#write table {
+  width: 100%; margin: 1em 0 1.2em; border-collapse: collapse;
+  border-top: 1.5px solid var(--ad-ink);
+  border-bottom: 1.5px solid var(--ad-ink);
+  font-size: .94em; line-height: 1.45;
+  font-variant-numeric: lining-nums tabular-nums;
+  background: transparent; color: var(--ad-ink);
+}
+#write table tr { border: 0; background: transparent; }
+#write table th, #write table td {
+  border: 0; padding: .55em .75em; background: transparent;
+  vertical-align: top; min-width: 0;
+}
+#write table thead th { border-bottom: 1px solid var(--ad-rule); font-weight: 700; }
+#write img { max-width: 100%; height: auto; filter: none; background-color: #fff; }
+#write figure { margin: 1.3em 0; text-align: center; }
+#write figcaption { font-size: .9em; line-height: 1.45; color: var(--ad-muted); text-align: left; }
+/* Optional native Markdown caption convention: a paragraph containing only emphasis. */
+#write > p > em:only-child { font-size: .92em; color: var(--ad-muted); }
+#write .md-math-block { margin: 1.2em 0; color: var(--ad-ink); }
+/* Preserve MathJax's own glyph fonts and Typora's editable math layout. */
+#write code, #write .md-fences { font-family: var(--monospace); font-size: .85em; }
+#write :not(pre) > code { color: var(--ad-ink); background: var(--ad-code); border: 0; padding: .12em .3em; border-radius: 3px; }
+#write .md-fences { background: var(--ad-code); border: 1px solid var(--ad-rule); border-radius: 4px; padding: .8em 1em; line-height: 1.5; margin: 1em 0; }
+#write hr { border: 0; height: 1px; background: var(--ad-rule); margin: 1.5em 0 !important; }
+#write .md-toc { font-size: .95em; }
+#write .md-toc a { text-decoration: none; }
+#write .footnotes { color: var(--ad-muted); font-size: .88em; }
+#write mark { color: var(--ad-ink); background: var(--ad-code); text-decoration: underline; }
+@media screen and (max-width: 700px) {
+  #write { padding: 28px 24px 70px; }
+}
+@media print {
+  :root { --ad-ink: #111; --ad-muted: #444; --ad-rule: #888; --ad-link: #111; --ad-code: #f3f3f3; --bg-color: #fff; --text-color: #111; }
+  html, body { background: #fff !important; color: #111 !important; }
+  #write { max-width: none; padding: 0; color: #111; font-size: 12pt; line-height: 1.5; }
+  #write a { color: #111; }
+  #write table tr { break-inside: avoid; }
+  #write img { filter: none !important; }
+  #write p { orphans: 3; widows: 3; }
+}
+
+/* academic-typora: manuscript conventions. All typography stays in #write. */
+#write {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  counter-reset: ad-section ad-subsection ad-subsubsection ad-fourth ad-fifth;
+}
+/* Use two separate blockquotes before the first section. A <!-- --> separator
+   prevents Markdown merging them without upsetting these sibling selectors. */
+#write > h1:first-of-type ~ blockquote:nth-of-type(1):not(h2 ~ blockquote),
+#write > h1:first-of-type ~ blockquote:nth-of-type(2):not(h2 ~ blockquote) {
+  border: 0; padding: 0; background: transparent; color: var(--ad-ink);
+  margin: 0 0 .85em; text-align: justify; font-size: 1em; line-height: inherit;
+}
+#write > h1:first-of-type ~ blockquote:nth-of-type(1):not(h2 ~ blockquote) > p,
+#write > h1:first-of-type ~ blockquote:nth-of-type(2):not(h2 ~ blockquote) > p {
+  margin: 0 0 .35em; text-indent: 0;
+}
+#write > h1:first-of-type ~ blockquote:nth-of-type(1):not(h2 ~ blockquote) > p:first-of-type::before {
+  content: "Abstract: "; font-weight: 700; font-style: normal;
+}
+#write > h1:first-of-type ~ blockquote:nth-of-type(2):not(h2 ~ blockquote) > p:first-of-type::before {
+  content: "Index Terms -- "; font-weight: 700; font-style: italic;
+}
+/* The title remains unnumbered. Use ## for sections and descend consecutively. */
+/* Counters are created once on #write. Set existing lower counters to zero
+   instead of creating new sibling scopes with counter-reset. */
+#write > h2 { counter-reset: none; counter-increment: ad-section; counter-set: ad-subsection 0 ad-subsubsection 0 ad-fourth 0 ad-fifth 0; text-align: left; }
+#write > h2::before, #write > h2.md-focus.md-heading::before { content: counter(ad-section) ". "; }
+#write > h3 { counter-reset: none; counter-increment: ad-subsection; counter-set: ad-subsubsection 0 ad-fourth 0 ad-fifth 0; text-align: left; }
+#write > h3::before, #write > h3.md-focus.md-heading::before { content: counter(ad-section) "." counter(ad-subsection) ". "; }
+#write > h4 { counter-reset: none; counter-increment: ad-subsubsection; counter-set: ad-fourth 0 ad-fifth 0; text-align: left; }
+#write > h4::before, #write > h4.md-focus.md-heading::before { content: counter(ad-section) "." counter(ad-subsection) "." counter(ad-subsubsection) " "; }
+#write > h5 { counter-reset: none; counter-increment: ad-fourth; counter-set: ad-fifth 0; text-align: left; }
+#write > h5::before, #write > h5.md-focus.md-heading::before { content: counter(ad-section) "." counter(ad-subsection) "." counter(ad-subsubsection) "." counter(ad-fourth) " "; }
+#write > h6 { counter-reset: none; counter-increment: ad-fifth; text-align: left; }
+#write > h6::before, #write > h6.md-focus.md-heading::before { content: counter(ad-section) "." counter(ad-subsection) "." counter(ad-subsubsection) "." counter(ad-fourth) "." counter(ad-fifth) " "; }
+/* Reserve the final top-level ## heading for Reference(s). CSS cannot match
+   heading text, so this is a documented position-based convention. */
+#write > h2:not(:has(~ h2)) { counter-increment: none; counter-set: none; }
+#write > h2:not(:has(~ h2))::before,
+#write > h2.md-focus.md-heading:not(:has(~ h2))::before { content: none; }
+/* Typora may otherwise replace a focused heading's prefix with an H3/H4 badge. */
+#write > h2::before, #write > h3::before, #write > h4::before,
+#write > h5::before, #write > h6::before,
+#write > h2.md-focus.md-heading::before, #write > h3.md-focus.md-heading::before,
+#write > h4.md-focus.md-heading::before, #write > h5.md-focus.md-heading::before,
+#write > h6.md-focus.md-heading::before {
+  position: static; display: inline; float: none;
+  top: auto; left: auto; border: 0; border-radius: 0; padding: 0;
+  color: inherit; background: none; font-size: inherit;
+  font-weight: inherit; font-style: inherit; line-height: inherit;
+  /* Keep heading numbers undecorated, including focused headings. */
+  text-decoration: none;
+}
+/* Only #ref- targets are citations. Write [1](#ref-example). */
+#write a[href^="#ref-"] {
+  color: var(--ad-reference); text-decoration: none; white-space: nowrap;
+}
+#write a[href^="#ref-"]::before { content: "["; }
+#write a[href^="#ref-"]::after { content: "]"; }
+#write a[href^="#ref-"]:hover { text-decoration: underline; }
+/* Lightweight draft markers: labels may contain arbitrary reminder text.
+   #ref- is retained as a legacy alias for the former placeholder syntax. */
+#write a[href="#ref"], #write a[href="#ref-"] {
+  color: var(--ad-placeholder); text-decoration: none;
+  white-space: normal; overflow-wrap: anywhere;
+}
+#write a[href="#todo"] {
+  color: var(--ad-todo); text-decoration: none;
+  white-space: normal; overflow-wrap: anywhere;
+}
+#write a[href="#ref"]::before, #write a[href="#todo"]::before { content: "["; }
+#write a[href="#ref"]::after, #write a[href="#todo"]::after { content: "]"; }
+/* Navigation and footnote markers are not paper citations. */
+#write .md-toc a[href^="#"]::before, #write .md-toc a[href^="#"]::after,
+#write .footnotes a[href^="#"]::before, #write .footnotes a[href^="#"]::after,
+#write a.footnote-ref::before, #write a.footnote-ref::after,
+#write a.footnote-backref::before, #write a.footnote-backref::after,
+#write a[href^="#"][aria-hidden="true"]::before,
+#write a[href^="#"][aria-hidden="true"]::after { content: none; }
+/* Native tables are not white-backed image panels. */
+#write .md-table-fig,
+#write figure:has(table) {
+  margin: 0; padding: 0; border-radius: 0;
+  background: transparent; color: var(--ad-ink); box-shadow: none;
+  text-align: left;
+}
+#write table thead, #write table tbody, #write table tfoot {
+  background: transparent; color: var(--ad-ink);
+}
+/* Keep white-designed images unchanged. Typora also uses figure containers
+   for Markdown tables, which must follow the editor background. */
+#write figure:not(.md-table-fig):not(:has(table)) {
+  box-sizing: border-box; margin: 1.3em 0; padding: 12px;
+  border-radius: 6px; background-color: #fff; color: #000;
+  text-align: center; break-inside: avoid;
+}
+#write figure:not(.md-table-fig):not(:has(table)) img {
+  display: block; margin: 0 auto; max-width: 100%; height: auto; filter: none;
+}
+#write figure:not(.md-table-fig):not(:has(table)) p { margin: 0; text-indent: 0; text-align: center; }
+#write figure:not(.md-table-fig):not(:has(table)) figcaption {
+  margin-top: 10px; color: #000; text-align: center;
+  font-family: var(--ad-serif); font-size: .9em; line-height: 1.45;
+  font-style: normal; hyphens: none;
+}
+#write figure:not(.md-table-fig):not(:has(table)) a[href^="#ref-"] { color: #1565c0; }
+#write figure:not(.md-table-fig):not(:has(table)) a[href="#ref"],
+#write figure:not(.md-table-fig):not(:has(table)) a[href="#ref-"] { color: #b45309; }
+#write figure:not(.md-table-fig):not(:has(table)) a[href="#todo"] { color: #1b7f3a; }
+#write table, #write .md-toc, #write .md-fences { text-align: left; hyphens: none; }
+#write .md-math-block { text-align: center; hyphens: none; }
+@media print {
+  #write figure:not(.md-table-fig):not(:has(table)) { padding: 0; border-radius: 0; }
+  #write a[href^="#ref-"] { color: #1565c0; }
+}
+
+:root { --ad-reference: #1565c0; --ad-placeholder: #b45309; --ad-todo: #1b7f3a; }
+/* Bibliography targets are records, not outbound citation links. The name
+   selector also supports Typora previews that omit custom id attributes. */
+#write a[id^="ref-"]:not([href]),
+#write a[name^="ref-"]:not([href]) {
+  display: inline-block; max-width: 100%; vertical-align: top;
+  color: var(--ad-ink); text-decoration: none; cursor: text;
+  font-family: var(--monospace, monospace); font-size: .85em;
+  line-height: 1.5; white-space: normal; overflow-wrap: anywhere;
+  text-align: left; hyphens: none;
+}
+#write a[id^="ref-"]:not([href])::before,
+#write a[id^="ref-"]:not([href])::after,
+#write a[name^="ref-"]:not([href])::before,
+#write a[name^="ref-"]:not([href])::after { content: none; }
+
+@media print {
+  #write a[href="#ref"], #write a[href="#ref-"] { color: #b45309; }
+  #write a[href="#todo"] { color: #1b7f3a; }
+}
