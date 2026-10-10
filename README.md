@@ -86,7 +86,7 @@ Source-based export uses Pandoc's Markdown parser. Standard Markdown, HTML image
 | Final bibliography heading | Final `## References` or `## Reference` | Unnumbered; position-based rule |
 | Body paragraph | Ordinary Markdown paragraph | Justified, without first-line indentation |
 | Emphasis | `**bold**`, `*italic*` | Native Markdown emphasis |
-| Citation link | `[1](#ref-example)` | Blue `[1]`; only `#ref-` targets get citation brackets |
+| Citation link | `[REF](#ref-example)` | Blue in Typora; first-use numbering in Word, red [REF] if the target ID is absent; no automatic numbering when the name is not REF; Language reference: Blue in Typora; first-use numbering in Word, red [REF] if the target ID is absent |
 | Citation placeholder | `[source to add](#ref)` | Orange `[source to add]`; the label is arbitrary |
 | Writing TODO | `[add supporting detail](#todo)` | Green `[add supporting detail]`; the label is arbitrary |
 | Bibliographic record | `<a id="ref-example" name="ref-example">…</a>` | Visible raw record and jump target, without citation brackets |

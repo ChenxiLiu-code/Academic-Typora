@@ -86,7 +86,7 @@ pandoc manuscript.md -o manuscript.docx --resource-path="." --reference-doc="/pa
 | 末尾参考文献标题 | 最后一个 `## References` 或 `## Reference` | 不编号；按位置识别 |
 | 正文段落 | 普通 Markdown 段落 | 两端对齐，不设置首行缩进 |
 | 强调 | `**bold**`、`*italic*` | 原生 Markdown 加粗、斜体 |
-| 引用链接 | `[1](#ref-example)` | 蓝色 `[1]`；只处理 `#ref-` 目标 |
+| 引用链接 | `[REF](#ref-example)` | Typora 中为蓝色；Word 中按首次引用编号，目标 ID 不存在时为红色 `[REF]`; 名称为非REF时不自动编号； |
 | 引用占位 | `[待补文献](#ref)` | 橙色 `[待补文献]`；提示文字任意填写 |
 | 写作待办 | `[补充对比说明](#todo)` | 绿色 `[补充对比说明]`；提示文字任意填写 |
 | 文献记录 | `<a id="ref-example" name="ref-example">…</a>` | 显示原始记录并提供跳转目标，不套引用方括号 |

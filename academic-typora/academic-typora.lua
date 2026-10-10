@@ -46,7 +46,7 @@ local function embed_image(folder)
   end
 end
 
-local function citation(link)
+local function citation(link, targets, numbers, order)
   local style
   if link.target == '#ref' or link.target == '#ref-' then
     style = 'Reference Placeholder'
@@ -54,6 +54,16 @@ local function citation(link)
     style = 'Writing TODO'
   elseif not link.target:match('^#ref%-') then
     return nil
+  else
+    local id = link.target:sub(2)
+    if not targets[id] then
+      return pandoc.Span({pandoc.Str('[REF]')}, pandoc.Attr('', {}, {['custom-style']='Invalid Reference'}))
+    end
+    if not numbers[id] then
+      numbers[id] = #order + 1
+      order:insert(id)
+    end
+    link.content = pandoc.Inlines{pandoc.Str(tostring(numbers[id]))}
   end
   local text = pandoc.utils.stringify(link.content)
   if not (text:sub(1,1) == '[' and text:sub(-1) == ']') then
@@ -258,6 +268,119 @@ local function anchor_paragraph(p)
   end
 end
 
+local function reference_id(block)
+  local id
+  local function find(element)
+    if not id and element.identifier:match('^ref%-.') then id = element.identifier end
+  end
+  pandoc.Pandoc{block}:walk{Span=find, Div=find, Header=find, CodeBlock=find}
+  return id
+end
+
+local function number_record(entry, number)
+  local label, inserted = '[' .. number .. ']', false
+  -- Put the number in the anchor's visible record where possible, so the
+  -- bookmark, monospace formatting, and BibTeX text stay together.
+  for i, block in ipairs(entry.blocks) do
+    entry.blocks[i] = block:walk{Span=function(span)
+      if not inserted and span.identifier == entry.id and pandoc.utils.stringify(span) ~= '' then
+        span.content:insert(1, pandoc.Space())
+        span.content:insert(1, pandoc.Str(label))
+        inserted = true
+        return span
+      end
+    end}
+    if inserted then return end
+  end
+  -- An empty anchor followed by a fenced BibTeX block keeps the bookmark at
+  -- its original position; the number goes on the first visible line.
+  for i, block in ipairs(entry.blocks) do
+    if block.t == 'CodeBlock' and block.text ~= '' then
+      block.text = label .. ' ' .. block.text; entry.blocks[i] = block; return
+    elseif (block.t == 'Para' or block.t == 'Plain') and pandoc.utils.stringify(block) ~= '' then
+      block.content:insert(1, pandoc.Space())
+      block.content:insert(1, pandoc.Str(label)); entry.blocks[i] = block; return
+    end
+  end
+end
+
+local function unused_record(block)
+  local attr = function() return pandoc.Attr('', {}, {['custom-style']='Unused Reference'}) end
+  local marked = pandoc.Pandoc{block}:walk{
+    Span=function(span)
+      span.attributes['custom-style'] = 'Unused Reference'; return span
+    end,
+    Code=function(code) return pandoc.Span({pandoc.Str(code.text)}, attr()) end,
+    Para=function(p)
+      if pandoc.utils.stringify(p) == '' then return p end
+      p.content = pandoc.Inlines{pandoc.Span(p.content, attr())}
+      return pandoc.Div({p}, pandoc.Attr('', {}, {['custom-style']='Source Code'}))
+    end,
+    Plain=function(p)
+      if pandoc.utils.stringify(p) == '' then return p end
+      p.content = pandoc.Inlines{pandoc.Span(p.content, attr())}
+      return pandoc.Div({p}, pandoc.Attr('', {}, {['custom-style']='Source Code'}))
+    end,
+    CodeBlock=function(code)
+      -- Syntax highlighting and Verbatim Char can override paragraph colors.
+      -- Keep literal lines in a monospace span with an explicit red style.
+      local content = pandoc.Inlines{}
+      for line in (code.text .. '\n'):gmatch('(.-)\n') do
+        if #content > 0 then content:insert(pandoc.LineBreak()) end
+        content:insert(pandoc.Str(line))
+      end
+      return pandoc.Div({pandoc.Para{pandoc.Span(content, attr())}},
+        pandoc.Attr('', {}, {['custom-style']='Source Code'}))
+    end}
+  return marked.blocks[1]
+end
+
+local function references(doc)
+  local targets, numbers, order = {}, {}, pandoc.List()
+  local function collect(element)
+    if element.identifier:match('^ref%-.') then targets[element.identifier] = true end
+  end
+  doc:walk{Span=collect, Div=collect, Header=collect, CodeBlock=collect,
+    Table=collect, Figure=collect, Image=collect, Link=collect}
+  local last_section
+  for i, block in ipairs(doc.blocks) do
+    if block.t == 'Header' and block.level == 2 then last_section = i end
+  end
+  -- Top-down traversal preserves reading order, including the position of
+  -- footnote citations. Links inside bibliography records do not count.
+  for i = 1, (last_section and last_section - 1 or #doc.blocks) do
+    doc.blocks[i] = doc.blocks[i]:walk{traverse='topdown', Link=function(link)
+      return citation(link, targets, numbers, order)
+    end}
+  end
+  if not last_section then return doc end
+  local result, entries, current = pandoc.Blocks{}, {}, nil
+  for i = 1, last_section do result:insert(doc.blocks[i]) end
+  for i = last_section + 1, #doc.blocks do
+    local block = doc.blocks[i]
+    local id = reference_id(block)
+    if id then
+      current = {id=id, position=#entries + 1, blocks=pandoc.Blocks{}}
+      entries[#entries+1] = current
+    end
+    if current then current.blocks:insert(block) else result:insert(block) end
+  end
+  table.sort(entries, function(a, b)
+    local left, right = numbers[a.id] or math.huge, numbers[b.id] or math.huge
+    return left == right and a.position < b.position or left < right
+  end)
+  for _, entry in ipairs(entries) do
+    if numbers[entry.id] then
+      number_record(entry, numbers[entry.id])
+    else
+      for i, block in ipairs(entry.blocks) do entry.blocks[i] = unused_record(block) end
+    end
+    result:extend(entry.blocks)
+  end
+  doc.blocks = result
+  return doc
+end
+
 local function frontmatter(quote, label)
   local first = quote.content[1]
   if first and (first.t == 'Para' or first.t == 'Plain') then
@@ -276,7 +399,8 @@ function Pandoc(doc)
   doc = doc:walk{RawInline = html_image}
   doc = doc:walk{Image = embed_image(folder)}
   doc = doc:walk{Inlines = anchors}
-  doc = doc:walk{Para = anchor_paragraph, Plain = anchor_paragraph, Link = citation}
+  doc = references(doc)
+  doc = doc:walk{Para = anchor_paragraph, Plain = anchor_paragraph}
   doc = doc:walk{Para = numbered_equation, Plain = numbered_equation}
   local last_section
   for index, block in ipairs(doc.blocks) do
