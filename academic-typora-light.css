@@ -220,10 +220,10 @@
    selector also supports Typora previews that omit custom id attributes. */
 #write a[id^="ref-"]:not([href]),
 #write a[name^="ref-"]:not([href]) {
-  display: inline-block; max-width: 100%; vertical-align: top;
+  display: inline; vertical-align: baseline;
   color: var(--ad-ink); text-decoration: none; cursor: text;
-  font-family: var(--monospace, monospace); font-size: .85em;
-  line-height: 1.5; white-space: normal; overflow-wrap: anywhere;
+  font-family: var(--ad-serif); font-size: 1em;
+  line-height: inherit; white-space: normal; overflow-wrap: anywhere;
   text-align: left; hyphens: none;
 }
 #write a[id^="ref-"]:not([href])::before,
@@ -238,7 +238,22 @@
 #write > h2:not(:has(~ h2)) ~ * :is(a[id^="ref-"], a[name^="ref-"]):not([href]):not([id="ref-"]):not([name="ref-"])::before {
   counter-increment: ad-reference;
   content: "[" counter(ad-reference) "] ";
-  font-weight: bold; text-decoration: none;
+  display: inline-block; width: 2.6em;
+  font-weight: normal; font-style: normal; color: #c00000;
+  text-indent: 0; text-decoration: none; vertical-align: baseline;
+}
+
+/* A hanging indent aligns wrapped lines with the reference text. Keep the
+   anchor inline so a DOI link after it can share the same paragraph. */
+#write > h2:not(:has(~ h2)) ~ p:has(:is(a[id^="ref-"], a[name^="ref-"]):not([href]):not([id="ref-"]):not([name="ref-"])) {
+  padding-left: 2.6em; text-indent: -2.6em;
+  margin: 0 0 .85em; text-align: justify; text-justify: inter-word; hyphens: none;
+}
+#write > h2:not(:has(~ h2)) ~ p:has(:is(a[id^="ref-"], a[name^="ref-"]):not([href]):not([id="ref-"]):not([name="ref-"])) a[href]:not([href^="#"]) {
+  color: var(--ad-reference); text-decoration: none;
+}
+#write > h2:not(:has(~ h2)) ~ p:has(:is(a[id^="ref-"], a[name^="ref-"]):not([href]):not([id="ref-"]):not([name="ref-"])) a[href]:not([href^="#"]):hover {
+  text-decoration: underline;
 }
 
 @media print {
