@@ -106,7 +106,7 @@
   text-align: justify;
   text-justify: inter-word;
   hyphens: auto;
-  counter-reset: ad-section ad-subsection ad-subsubsection ad-fourth ad-fifth;
+  counter-reset: ad-section ad-subsection ad-subsubsection ad-fourth ad-fifth ad-reference;
 }
 /* Use two separate blockquotes before the first section. A <!-- --> separator
    prevents Markdown merging them without upsetting these sibling selectors. */
@@ -235,6 +235,16 @@
 #write a[id^="ref-"]:not([href])::after,
 #write a[name^="ref-"]:not([href])::before,
 #write a[name^="ref-"]:not([href])::after { content: none; }
+
+/* The final top-level section is References. Count records in source order
+   for the editor only; the DOCX filter keeps its first-citation numbering.
+   Match both direct anchors and anchors inside Typora's inline wrappers. */
+#write > h2:not(:has(~ h2)) ~ :is(a[id^="ref-"], a[name^="ref-"]):not([href]):not([id="ref-"]):not([name="ref-"])::before,
+#write > h2:not(:has(~ h2)) ~ * :is(a[id^="ref-"], a[name^="ref-"]):not([href]):not([id="ref-"]):not([name="ref-"])::before {
+  counter-increment: ad-reference;
+  content: "[" counter(ad-reference) "] ";
+  font-weight: bold; text-decoration: none;
+}
 
 @media print {
   #write a[href="#ref"], #write a[href="#ref-"] { color: #b45309; }

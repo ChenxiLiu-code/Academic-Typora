@@ -160,6 +160,19 @@ Use `<br>` for line breaks inside an HTML anchor. Escape HTML-special characters
 
 Write `[1](#ref-example)`, not `[[1]](#ref-example)`: the editor supplies the outer brackets. Numbers and ordering are **manual**. This project does not parse BibTeX into a formatted bibliography, sort references, renumber citations, or run citeproc. Keep the complete records for later use in your final bibliography workflow. The Word filter preserves supported record text and named bookmarks, and converts the citation brackets to actual text.
 
+### Word citation numbering and reference checks
+
+The existing Lua filter automatically applies the following rules during DOCX export:
+
+- An internal `#ref-xxx` link whose target ID exists receives a blue `[1]`, `[2]`, etc., in order of first occurrence in the manuscript. Repeated links to the same ID reuse the same number. Footnotes and tables participate in reading order. The original link label may be `REF`, a number, or other text; it is replaced in the Word output.
+- A formal citation to a missing ID becomes red `[REF]` text. It receives no number and no broken hyperlink.
+- Exact `#ref` and `#ref-` placeholders stay orange, and exact `#todo` markers stay green. They do not take citation numbers. Other links and literal code remain unchanged.
+- Records under the final `## References` heading receive the corresponding `[n]` prefix and are ordered by first citation. Uncited records follow in their original relative order, with their full text in red and no assigned number. Links inside the bibliography do not count as manuscript citations.
+
+Use **one `ref-xxx` anchor per reference entry**, either enclosing the raw record or immediately before its fenced BibTeX block, as shown above. Keep any continuation blocks with their entry. Put all reference entries under the final References heading and avoid manually adding a numeric prefix to the stored record.
+
+These checks only match citation targets to IDs and detect uncited records. They do not validate BibTeX fields, author names, years, or publication details. First-citation numbering, sorting, and red marks affect only the exported DOCX; the Markdown source and Typora citation labels are not rewritten. The editor's separate record counter is described above. Word receives ordinary editable numbers rather than live citation fields: re-export after changing citation order. No additional script or library is required.
+
 ### Lightweight writing markers
 
 ```markdown
